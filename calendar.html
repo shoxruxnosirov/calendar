@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    td,
+    th {
+      border: 1px solid rgb(0, 0, 0);
+      padding: 3px;
+      text-align: center;
+    }
+
+    th {
+      font-weight: bold;
+      background-color: #E6E6E6;
+    }
+  </style>
+</head>
+
+<body>
+
+    <div>
+        <label for="year">yilni kiriting</label>
+        <input type="number" id="year"/> <br>
+        <label for="month">Oyni kiriting</label>
+        <input type="number" id="month"/> <br>
+        <br>        
+        <button onclick="beforeMonth()"><<</button>
+        <button onclick="myFunction()">kalendarni ko'rish</button>
+        <button onclick="afterMonth()">>></button>
+        <br> <br>
+
+    </div>
+  <div id="calendar"></div>
+
+  <script>
+    function createCalendar(elem, year, month) {
+        elem.innerHTML = '';
+        let table = document.createElement('table');
+        let tbody = document.createElement('tbody');
+        tbody.innerHTML = '<tr><th>MU</th><th>TU</th><th>WE</th><th>TH</th><th>FR</th><th>SA</th><th>SU</th></tr>'
+        let day_leng = (new Date(year, month, 1 ) - new Date(year, month - 1, 1)) / 86_400_000; 
+        let day = (new Date(year, month - 1, 1)).getDay();
+        if(!day){
+            day = 7;
+        }
+        let days = 1;
+        let day1 = (new Date(year, month - 1, 1 ) - new Date(year, month - 2, 1)) / 86_400_000;
+        day1 -= (new Date(year, month - 2, day1)).getDay() - 1;
+        day2 = 1;
+        let isTrue = false;
+        while(true){
+            let tr = document.createElement('tr');
+            tbody.append(tr);
+            for(let d = 1; d < 8; d++){
+                let td = document.createElement('td');
+                tr.append(td);
+                td.textContent = '';
+
+                if(days > day_leng){
+                    td.textContent = day2++;
+                    td.style.color = '#ccc';
+                    continue;
+                } 
+                if(isTrue || day == d){
+                    td.textContent = `${days}`;
+                    days++;
+                    isTrue = true;
+                    continue;
+                } else {
+                    td.textContent = day1++;
+                    td.style.color = '#ccc';
+                }
+            }
+
+            if(days > day_leng){
+                break;
+            }
+        }
+        table.append(tbody);
+        elem.append(table);
+    
+    }
+    
+    function beginCalendar(){
+        document.getElementById('year').value = new Date().getFullYear();
+        document.getElementById('month').value =  new Date().getMonth() + 1;
+        myFunction();
+    };
+    beginCalendar();
+
+    function myFunction() {
+        let year = document.getElementById('year').value;
+        let month = document.getElementById('month').value;
+        let calendar = document.getElementById('calendar');
+        if(isFinite(year) && isFinite(month) && year >= 0 && year < 100000 && month > 0 && month < 13  && (+year % 1 + +month % 1) === 0)
+            createCalendar(calendar, year, month);
+        else {
+            alert("xato kiritingiz");
+        }
+    }
+    function beforeMonth(){
+        let calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+        if(document.getElementById('month').value == 1){
+            document.getElementById('month').value = 12;
+            document.getElementById('year').value--;
+        }else {
+            document.getElementById('month').value--;
+        };
+        myFunction();
+    }
+    function afterMonth(){
+        let calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+        if(document.getElementById('month').value == 12){
+            document.getElementById('month').value = 1;
+            document.getElementById('year').value++;
+        } else {
+            document.getElementById('month').value++;
+        };
+        myFunction();
+    }
+  </script>
+
+</body>
+</html>
